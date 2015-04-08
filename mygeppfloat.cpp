@@ -33,7 +33,7 @@ void makeInputFile(int nVal, float bVal);
 int main()
 {
    //float A[103][104], X[103];
-   float X[104];
+   float X[(104*104)/2];
    float** A = new float*[104];
    for(int i = 0; i < 104; ++i)
    {
@@ -47,30 +47,12 @@ int main()
 
     int nValue;
     float bValue;
-    cout << "Would you like to make a .dat file? (Y/N)" << endl;
-    //char answer;
-    //cin << answer;
-    //if statement goes here
-    cout << "What N value would you like?" << endl;
-    cin  >> nValue;
+    nValue = 101;
     nValue = 3+nValue;
-    cout << "What Coefficient (b value) would you like?" << endl;
-    cin  >> bValue;
+    bValue = 200;
     makeInputFile(nValue,bValue);
-    cout << "Made input file" << endl;
+    
    INPUT(&OK, A, &nValue, bValue);
-/*
-    cout << "Did it pass by value?" << endl;
-
-   for(int i = 0; i < nValue; i++)
-    {
-        for(int j = 0; j < nValue+1; j++)
-        {
-            cout << A[i][j] << " ";
-        }
-        cout << endl;
-    }
-*/
     OK = true;
     cout << OK << "OK <-" << endl;
    if (OK) {
@@ -124,7 +106,6 @@ int main()
          }
          I++;
       }
-      cout << OK << "Ok here too" << endl;
       if (OK) {
          /* STEP 9 */
          N1 = NROW[nValue-1];
@@ -357,6 +338,7 @@ float absval(float val)
 }
 
 
+//TODO we will want to change the name of this function
 void makeInputFile(int nVal, float bVal)
 {
     float cVal = bVal - 2;
