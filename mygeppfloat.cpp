@@ -36,7 +36,10 @@ int main()
    float X[104];
    float** A = new float*[104];
    for(int i = 0; i < 104; ++i)
-        A[i] = new float[104];
+   {
+       A[i] = new float[104];
+   }
+
 
    float AMAX,XM,SUM;
    int NROW[104];
@@ -54,10 +57,11 @@ int main()
     cout << "What Coefficient (b value) would you like?" << endl;
     cin  >> bValue;
     makeInputFile(nValue,bValue);
-
+    cout << "Made input file" << endl;
    INPUT(&OK, A, &nValue, bValue);
-
+/*
     cout << "Did it pass by value?" << endl;
+
    for(int i = 0; i < nValue; i++)
     {
         for(int j = 0; j < nValue+1; j++)
@@ -66,13 +70,16 @@ int main()
         }
         cout << endl;
     }
-
+*/
     OK = true;
     cout << OK << "OK <-" << endl;
    if (OK) {
       M = nValue + 1;
       /* STEP 1 */
-      for (I=1; I<=nValue; I++) NROW[I-1] = I;
+      for (I=1; I<=nValue; I++)
+      {
+            NROW[I-1] = I;
+      }
       /* initialize row pointer */
       NN = nValue - 1;
       ICHG = 0;
@@ -80,7 +87,6 @@ int main()
       /* STEP 2 */
       while ((OK) && (I <= NN)) {
          /* STEP 3 */
-         cout << "* STEP 3 */" << endl;
          IMAX = NROW[I-1];
          AMAX = absval(A[IMAX-1][I-1]);
          IMAX = I;
@@ -123,7 +129,7 @@ int main()
          /* STEP 9 */
          N1 = NROW[nValue-1];
          cout << "NROW[N-1];" << NROW[nValue-1] <<endl;
-         cout << "step9 absval(A[N1-1][N-1])" << absval(A[N1][nValue]) <<endl;
+         cout << "step9 absval(A[N1-1][N-1])" << absval(A[N1-1][nValue-1]) <<endl;
          cout << "N and N1" << nValue << " " << N1 <<endl;
          if (absval(A[N1-1][nValue-1]) <= ZERO) {
                 cout << "Ok = false" << endl;
@@ -132,7 +138,6 @@ int main()
          /* system has no unique solution */
          else {
             /* STEP 10 */
-            cout << "HELLOOO" << endl;
             /* start backward substitution */
             X[nValue-1] = A[N1-1][M-1] / A[N1-1][nValue-1];
             /* STEP 11 */
@@ -154,11 +159,18 @@ int main()
       if (!OK) printf("System has no unique solution\n");
    }
 
-    cout << "Did it get a solution?" << endl;
+    cout << "These are the multipliers" << endl;
    for(int i = 0; i < nValue; i++)
     {
-            cout << X[i] << " ";
-        cout << endl;
+        for(int j = 0; j < nValue; j++)
+        {
+            if(i == NROW[j]-1)
+            {
+                cout << NROW[j] << ": " << X[j] <<endl;
+            }
+        }
+
+       //cout << endl;
     }
 
    //for(int i = 0; i < 103; ++i)
@@ -177,6 +189,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
    float cVal = bVal-2;
 
     //first n rows
+    cout << "HERE" << endl;
    for(int i = 0; i+1 < *nVal; i++)
     {
         if(i < *nVal -2)
@@ -242,6 +255,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
         }
 
     }
+    /*
     for(int i = 0; i < *nVal; i++)
     {
         for(int j = 0; j < *nVal+1; j++)
@@ -252,6 +266,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
     }
     cout << "NVAL:" << endl;
     cout << *nVal << endl;
+    */
 
    printf("This is Gauss Elimination modified somehow -- your job to figure out how.\n");
    printf("The array will be input from a text file in the order:\n");
@@ -315,17 +330,23 @@ void OUTPUT(int N, int M, int ICHG, int *NROW, float *X, float **&A)
    else OUP = stdout;
    fprintf(OUP, "GAUSSIAN ELIMINATION - WITH MYSTERY MODIFICATION\n\n");
    fprintf(OUP, "The reduced system - output by rows:\n");
+   ///This was here before:
+   /*
    for (I=1; I<=N; I++) {
       for (J=1; J<=N; J++) fprintf(OUP, " %11.8f", A[I-1][J-1]);
       fprintf(OUP, "\n");
    }
-   fprintf(OUP, "\n\nHas solution vector:\n");
-   for (I=1; I<=N; I++) {
-      fprintf(OUP, "  %12.8f", X[I-1]);
+   */
+   fprintf(OUP, "\n\nHas solution vector \n");
+   for (I=3; I<=N-2; I+=5) {
+      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.6f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
    }
    fprintf (OUP, "\nwith %d row interchange(s)\n", ICHG);
    fprintf(OUP, "\nThe rows have been logically re-ordered to:\n");
-   for (I=1; I<=N; I++) fprintf(OUP, " %2d", NROW[I-1]); fprintf(OUP,"\n");
+   for (I=1; I<=N; I++)
+   {
+        fprintf(OUP, " %2d", NROW[I-1]); fprintf(OUP,"\n");
+   }
 }
 
 /* Absolute Value Function */
