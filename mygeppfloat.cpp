@@ -22,6 +22,7 @@
 #include <iostream>
 #include <vector>
 #define ZERO 1.0E-10
+#define ASIZE 10
 #define true 1
 #define false 0
 using namespace std;
@@ -29,55 +30,57 @@ using namespace std;
 float absval(float);
 void INPUT(int *OK, float **&A, int *nVal, float bVal);
 void OUTPUT(int, int, int, int *, float *, float **&A);
-void makeMultipliersFile(vector<float> multipliers);
-
+void makeMultipliersFile(float **&A, int nVal, int * NROW);
 
 int main()
 {
    //float A[103][104], X[103];
-   float X[(104*104)/2];
-   float** A = new float*[104];
-   for(int i = 0; i < 104; ++i)
+   float X[(ASIZE*ASIZE)/2];
+   float** A = new float*[ASIZE];
+   for(int i = 0; i < ASIZE; ++i)
    {
-       A[i] = new float[104];
+       A[i] = new float[ASIZE+1];
    }
 
 
 
    float AMAX,XM,SUM;
-   int NROW[104];
+   int NROW[ASIZE];
    int M,ICHG,I,NN,IMAX,J,JJ,IP,JP,NCOPY,I1,J1,N1,K,N2,KK,OK;
-
+    OK = true;
     vector<float> multipliers;
-    int nValue;
+    int N;
     float bValue;
-    nValue = 101;
-    nValue = 3+nValue;
+    N = 7;//101;
+    N = 3+N;
     bValue = 100;
 
-   INPUT(&OK, A, &nValue, bValue);
-    OK = true;
-    cout << OK << "OK <-" << endl;
+   INPUT(&OK, A, &N, bValue);
+
+   for(int i = 0; i < ASIZE; i++)
+   {
+       for(int j = 0; j < ASIZE+1; j++)
+       {
+           cout << A[i][j] << " ";
+       }
+       cout << endl;
+   }
    if (OK) {
-      M = nValue + 1;
+      M = N + 1;
       /* STEP 1 */
-      for (I=1; I<=nValue; I++)
-      {
-            NROW[I-1] = I;
-      }
+      for (I=1; I<=N; I++) NROW[I-1] = I;
       /* initialize row pointer */
-      NN = nValue - 1;
+      NN = N - 1;
       ICHG = 0;
       I = 1;
       /* STEP 2 */
-      int counter = 1;
       while ((OK) && (I <= NN)) {
          /* STEP 3 */
          IMAX = NROW[I-1];
          AMAX = absval(A[IMAX-1][I-1]);
          IMAX = I;
          JJ = I + 1;
-         for (IP=JJ; IP<=nValue; IP++) {
+         for (IP=JJ; IP<=N; IP++) {
             JP = NROW[IP-1];
             if (absval(A[JP-1][I-1]) > AMAX) {
                AMAX = absval(A[JP-1][I-1]);
@@ -97,8 +100,7 @@ int main()
             }
             I1 = NROW[I-1];
             /* STEP 6 */
-            
-            for (J=JJ; J<=nValue; J++) {
+            for (J=JJ; J<=N; J++) {
                J1 = NROW[J-1];
                /* STEP  7 */
                XM = A[J1-1][I-1] / A[I1-1][I-1];
@@ -107,46 +109,58 @@ int main()
                   A[J1-1][K-1] = A[J1-1][K-1] - XM * A[I1-1][K-1];
                /* Multiplier XM could be saved in A[J1-1,I-1]  */
                A[J1-1][I-1] = XM;
+               cout << XM << " ";
                multipliers.push_back(XM);
-
             }
          }
          I++;
       }
       if (OK) {
          /* STEP 9 */
-         N1 = NROW[nValue-1];
-         cout << "NROW[N-1];" << NROW[nValue-1] <<endl;
-         cout << "step9 absval(A[N1-1][N-1])" << absval(A[N1-1][nValue-1]) <<endl;
-         cout << "N and N1" << nValue << " " << N1 <<endl;
-         if (absval(A[N1-1][nValue-1]) <= ZERO) {
-                cout << "Ok = false" << endl;
-                OK = false;
-         }
+         N1 = NROW[N-1];
+         if (absval(A[N1-1][N-1]) <= ZERO) OK = false;
          /* system has no unique solution */
          else {
             /* STEP 10 */
             /* start backward substitution */
-            X[nValue-1] = A[N1-1][M-1] / A[N1-1][nValue-1];
+            X[N-1] = A[N1-1][M-1] / A[N1-1][N-1];
             /* STEP 11 */
             for (K=1; K<=NN; K++) {
                I = NN - K + 1;
                JJ = I + 1;
                N2 = NROW[I-1];
                SUM = 0.0;
-               for (KK=JJ; KK<=nValue; KK++) {
+               for (KK=JJ; KK<=N; KK++) {
                   SUM = SUM - A[N2-1][KK-1] * X[KK-1];
                }
-               X[I-1] = (A[N2-1][nValue] + SUM) / A[N2-1][I-1];
+               X[I-1] = (A[N2-1][N] + SUM) / A[N2-1][I-1];
             }
             /* STEP 12 */
             /* procedure completed successfully */
-            OUTPUT(nValue, M, ICHG, NROW, X, A);
+            OUTPUT(N, M, ICHG, NROW, X, A);
          }
       }
       if (!OK) printf("System has no unique solution\n");
    }
-    makeMultipliersFile(multipliers);
+   int row = 1;
+   for(int i = 0; i < ASIZE; i++)
+   {
+       for(int j = 0; j < ASIZE+1; j++)
+       {
+           if(i == NROW[j]-1)
+            {
+               for(int k = 0; k < row; k++)
+               {
+                   cout << A[i][k] << " ";
+               }
+               row++;
+               cout << endl;
+            }
+       }
+   }
+   cout << "before Multipliers" << endl;
+    makeMultipliersFile(A, N, NROW);
+   cout << "END" << endl;
    return 0;
 }
 
@@ -154,7 +168,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
 {
    int I, J;
    char AA;
-   char NAME[104];
+   char NAME[ASIZE];
    FILE *INP;
    //float bVal;
    float cVal = bVal-2;
@@ -207,8 +221,6 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
             A[i][*nVal-1] = -1;
             A[i][*nVal] = 0;
             A[i][*nVal+1] = 0;
-            ///newInFile = "1 0 -1 0 \n";
-
             //newInFile << "0 1 ";
             A[i+1][0] = 0;
             A[i+1][1] = 1;
@@ -250,6 +262,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
    //cin.ignore(INT_MAX);
    ///fflush(stdin);
    ///scanf("%c",&AA);
+   /*
    if ((AA == 'Y') || (AA == 'y')) {
         cout <<"HHH"<<endl;
       printf("Input the file name in the form - drive:name.ext\n");
@@ -276,14 +289,14 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
    else {
       printf("The program will end so the input file can be created.\n");
       *OK = false;
-   }
+   }*/
 }
 
 
 void OUTPUT(int N, int M, int ICHG, int *NROW, float *X, float **&A)
 {
    int I, J, FLAG;
-   char NAME[104];
+   char NAME[ASIZE];
    FILE *OUP;
 
    printf("Choice of output method:\n");
@@ -309,7 +322,7 @@ void OUTPUT(int N, int M, int ICHG, int *NROW, float *X, float **&A)
    */
    fprintf(OUP, "\n\nHas solution vector \n");
    for (I=3; I<=N-2; I+=5) {
-      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.16f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
+      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.6f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
    }
    fprintf (OUP, "\nwith %d row interchange(s)\n", ICHG);
    /*
@@ -328,15 +341,31 @@ float absval(float val)
 }
 
 
-void makeMultipliersFile(vector<float> multipliers)
+void makeMultipliersFile(float **&A, int nVal, int * NROW)
 {
-    ofstream newInFile;
-    newInFile.open ("multipliers.dat");
-    for(int i = 0; i < multipliers.size(); i++)
-    {
+    FILE *newInFile;
+    newInFile = fopen("multipliers.dat","w");
+    bool space;
+    bool prevspace;
 
-        newInFile << multipliers[i];
-        newInFile << "\n";
+    int row = 1;
+    for(int i = 0; i < ASIZE; i++)
+    {
+        for(int j = 0; j < ASIZE+1; j++)
+        {
+            //find the correct row, in the correct order
+            if(i == NROW[j]-1)
+            {
+                //multipliers, which is the lower-triangular region
+                for(int k = 0; k < row; k++)//(int k = (ASIZE+1)*i + j; k <= row + (ASIZE+1)*i + j; k++)
+                {
+                    fprintf(newInFile, "%1.8f ",A[i][k]);
+                }
+                fprintf(newInFile, "\n");
+                row += 1;
+
+            }
+        }
     }
-    newInFile.close();
+
 }

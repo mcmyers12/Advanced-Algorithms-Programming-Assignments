@@ -41,7 +41,7 @@ int main()
       /* initialize row pointer */
       NN = N - 1;
       ICHG = 0;
-      I = 1; 
+      I = 1;
       /* STEP 2 */
       while ((OK) && (I <= NN)) {
          /* STEP 3 */
@@ -55,10 +55,10 @@ int main()
                AMAX = absval(A[JP-1][I-1]);
                IMAX = IP;
             }
-         }  
+         }
          /* STEP 4 */
          if (AMAX <= ZERO) OK = false;
-         else { 
+         else {
             /* STEP 5 */
             /* simulate row interchange */
             if ( NROW[I-1] != NROW[IMAX-1]) {
@@ -74,12 +74,13 @@ int main()
                /* STEP  7 */
                XM = A[J1-1][I-1] / A[I1-1][I-1];
                /* STEP 8 */
-               for (K=JJ; K<=M; K++) 
+               for (K=JJ; K<=M; K++)
                   A[J1-1][K-1] = A[J1-1][K-1] - XM * A[I1-1][K-1];
                /* Multiplier XM could be saved in A[J1-1,I-1]  */
                A[J1-1][I-1] = XM;
-            }  
-         }  
+               cout << XM << endl;
+            }
+         }
          I++;
       }
       if (OK) {
@@ -99,13 +100,13 @@ int main()
                SUM = 0.0;
                for (KK=JJ; KK<=N; KK++) {
                   SUM = SUM - A[N2-1][KK-1] * X[KK-1];
-               }  
+               }
                X[I-1] = (A[N2-1][N] + SUM) / A[N2-1][I-1];
-            }  
+            }
             /* STEP 12 */
             /* procedure completed successfully */
             OUTPUT(N, M, ICHG, NROW, X, A);
-         }  
+         }
       }
       if (!OK) printf("System has no unique solution\n");
    }
@@ -117,7 +118,7 @@ void INPUT(int *OK, float A[][30], int *N)
    int I, J;
    char AA;
    char NAME[30];
-   FILE *INP; 
+   FILE *INP;
 
    printf("This is Gauss Elimination modified somehow -- your job to figure out how.\n");
    printf("The array will be input from a text file in the order:\n");
