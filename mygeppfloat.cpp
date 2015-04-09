@@ -29,6 +29,8 @@ float absval(float);
 void INPUT(int *OK, float **&A, int *nVal, float bVal);
 void OUTPUT(int, int, int, int *, float *, float **&A);
 void makeInputFile(int nVal, float bVal);
+void makeMultipliersFile(vector<float> multipliers);
+
 
 int main()
 {
@@ -51,7 +53,7 @@ int main()
     nValue = 3+nValue;
     bValue = 200;
     makeInputFile(nValue,bValue);
-    
+
    INPUT(&OK, A, &nValue, bValue);
     OK = true;
     cout << OK << "OK <-" << endl;
@@ -102,6 +104,7 @@ int main()
                   A[J1-1][K-1] = A[J1-1][K-1] - XM * A[I1-1][K-1];
                /* Multiplier XM could be saved in A[J1-1,I-1]  */
                A[J1-1][I-1] = XM;
+               multipliers.push_back(XM);
             }
          }
          I++;
@@ -392,6 +395,24 @@ void makeInputFile(int nVal, float bVal)
         }
 
     }
+
+    newInFile.close();
+
+}
+
+
+
+void makeMultipliersFile(vector<float> multipliers)
+{
+    ofstream newInFile;
+    newInFile.open ("multipliers.dat");
+    for(int i = 0; i < multipliers.size(); i++)
+    {
+
+        newInFile << multipliers[i];
+        newInFile << "\n";
+    }
+
 
     newInFile.close();
 
