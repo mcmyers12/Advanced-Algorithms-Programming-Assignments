@@ -16,6 +16,8 @@
 *            linear system has no unique solution.
 */
 
+#include <iostream>
+using namespace std;
 #include<stdio.h>
 #include<math.h>
 #define ZERO 1.0E-10
@@ -81,6 +83,7 @@ int main()
                cout << XM << endl;
             }
          }
+
          I++;
       }
       if (OK) {

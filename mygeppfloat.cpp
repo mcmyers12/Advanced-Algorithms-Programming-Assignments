@@ -22,8 +22,13 @@
 using namespace std;
 
 float absval(float);
-void INPUT(int *OK, float **&A, int *nVal, float bVal);
-void OUTPUT(int, int, int, int *, float *, float **&A);
+
+//Fills the augmented matrix with the coefficients of this special system of equations 
+//      for N = 101
+//@pre a matrix exists
+//@post the matrix is filled with the coefficients
+//@usage fillAugmentedMatrixWithCoefficients(A, nVal, bVal)
+void fillAugmentedMatrixWithCoefficients(float **&A, int *nVal, float bValue);
 
 //Outputs the solution vector to file solution.dat
 //@pre the number of equations and a solution vector exist
@@ -32,7 +37,8 @@ void OUTPUT(int, int, int, int *, float *, float **&A);
 void outputSolutionVectorToFile(int numberEquations, float *solutionVector);
 
 //Outputs the Multipliers to file multipliers.dat
-//@pre A is filled with the multipliers, nVal was declared, NROW holds the correct row mutations
+//@pre A is filled with the multipliers, nVal was declared, NROW holds the correct row 
+//      mutations
 //@post multipliers are in file multipliers.dat
 //@usage makeMultipliersFile(float **&A, int N, int * NROW)
 void makeMultipliersFile(float **&A, int nVal, int * NROW);
@@ -47,7 +53,6 @@ int main()
        A[i] = new float[105];
    }
 
-
    float AMAX,XM,SUM;
    int NROW[ASIZE];
    int M,ICHG,I,NN,IMAX,J,JJ,IP,JP,NCOPY,I1,J1,N1,K,N2,KK,OK;
@@ -61,16 +66,8 @@ int main()
     bValue = 200;
 
 
-   INPUT(&OK, A, &N, bValue);
+   fillAugmentedMatrixWithCoefficients(A, &N, bValue);
 
-   for(int i = 0; i < ASIZE; i++)
-   {
-       for(int j = 0; j < ASIZE+1; j++)
-       {
-           cout << A[i][j] << " ";
-       }
-       cout << endl;
-   }
     OK = true;
    if (OK) {
       M = N + 1;
@@ -116,7 +113,6 @@ int main()
                   A[J1-1][K-1] = A[J1-1][K-1] - XM * A[I1-1][K-1];
                /* Multiplier XM could be saved in A[J1-1,I-1]  */
                A[J1-1][I-1] = XM;
-               cout << XM << " ";
                multipliers.push_back(XM);
             }
          }
@@ -145,7 +141,6 @@ int main()
             }
             /* STEP 12 */
             /* procedure completed successfully */
-           // OUTPUT(N, M, ICHG, NROW, X, A);
             outputSolutionVectorToFile(N, X);
          }
       }
@@ -157,48 +152,42 @@ int main()
 }
 
 
-void INPUT(int *OK, float **&A, int *nVal, float bVal)
+//Fills the augmented matrix with the coefficients of this special system of equations 
+//      for N = 101
+//@pre a matrix exists
+//@post the matrix is filled with the coefficients
+//@usage fillAugmentedMatrixWithCoefficients(A, nVal, bVal)
+void fillAugmentedMatrixWithCoefficients(float **&A, int *nVal, float bValue)
 {
-   int I, J;
-   char AA;
-   char NAME[ASIZE];
-   FILE *INP;
-   //float bVal;
-   float cVal = bVal-2;
+   float middleValue = bValue + 2;
 
     //first n rows
    for(int i = 0; i+1 < *nVal; i++)
     {
         if(i < *nVal -2)
         {
-            for(int j = 0; j < *nVal+1; j++)//j+1<
+            for(int j = 0; j < *nVal+1; j++)
             {
                 if(i == j)
                 {
                     A[i][j] = -1;
-                    //newInFile << " ";
-                    A[i][j+1] = bVal;
-                    //newInFile << " ";
+                    A[i][j+1] = middleValue;
                     A[i][j+2] = -1;
                     j+=2;
-                    //newInFile << " ";
                 }
                 else if(j == *nVal)
                 {
-                    A[i][j] = cVal;
-                    //newInFile << "\n";
+                    A[i][j] = bValue;
                 }
                 else
                 {
                     A[i][j] = 0;
-                    //newInFile << " ";
                 }
             }
         }
         //Last two rows in the pattern
         else if(i < *nVal-1)
         {
-            //newInFile << "-1 0 1 ";
             A[i][0] = -1;
             A[i][1] = 0;
             A[i][2] = 1;
@@ -206,7 +195,6 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
             for(int x = 0; x < *nVal - 6; x++)
             {
                 A[i][x+3] = 0;
-                //newInFile << " ";
             }
 
             A[i][*nVal-3] = 1;
@@ -214,62 +202,18 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
             A[i][*nVal-1] = -1;
             A[i][*nVal] = 0;
             A[i][*nVal+1] = 0;
-            //newInFile << "0 1 ";
             A[i+1][0] = 0;
             A[i+1][1] = 1;
             for(int x = 0; x < *nVal - 4; x++)
             {
                 A[i+1][x+2] = 0;
-              //  newInFile << 0;
-               // newInFile << " ";
             }
             A[i+1][*nVal-2] = -1;
             A[i+1][*nVal-1] = 0;
             A[i+1][*nVal] = 0;
-            //newInFile << "-1 0 0 ";
         }
 
     }
-
-   printf("This is Gauss Elimination modified somehow -- your job to figure out how.\n");
-   printf("The array will be input from a text file in the order:\n");
-   printf("A(1,1), A(1,2), ..., A(1,N+1), A(2,1), A(2,2), ..., A(2,N+1),\n");
-   printf("..., A(N,1), A(N,2), ..., A(N,N+1)\n\n");
-   printf("Place as many entries as desired on each line, but separate ");
-   printf("entries with\n");
-   printf("at least one blank.\n\n\n");
-   printf("Has the input file been created? - enter Y or N.\n");
-   //cin.clear();
-   //cin.ignore(INT_MAX);
-   ///fflush(stdin);
-   ///scanf("%c",&AA);
-   /*
-   if ((AA == 'Y') || (AA == 'y')) {
-        cout <<"HHH"<<endl;
-      printf("Input the file name in the form - drive:name.ext\n");
-      printf("for example:   A:DATA.DTA\n");
-      scanf("%s", NAME);
-      INP = fopen(NAME, "r");
-      *OK = false;
-      while (!(*OK)) {
-         printf("Input the number of equations - an integer.\n");
-            cin.clear();
-            cin.ignore(INT_MAX);
-            scanf("%d", nVal);
-         if (*nVal > 0) {
-            for (I=1; I<=*nVal; I++) {
-               for (J=1; J<=*nVal+1; J++) fscanf(INP, "%f", &A[I-1][J-1]);
-               fscanf(INP, "\n");
-            }
-            *OK = true;
-            fclose(INP);
-         }
-         else printf("The number must be a positive integer.\n");
-      }
-   }
-   else {
-      *OK = false;
-   }*/
 }
 
 
@@ -295,8 +239,6 @@ float absval(float val)
 }
 
 
-
-
 //Outputs the Multipliers to file multipliers.dat
 //@pre A is filled with the multipliers, nVal was declared, NROW holds the correct row mutations
 //@post multipliers are in file multipliers.dat
@@ -317,9 +259,8 @@ void makeMultipliersFile(float **&A, int nVal, int * NROW)
             if(i == NROW[j]-1)
             {
                 //multipliers, which is the lower-triangular region
-                for(int k = 0; k < row; k++)//(int k = (ASIZE+1)*i + j; k <= row + (ASIZE+1)*i + j; k++)
+                for(int k = 0; k < row; k++)
                 {
-                    cout << A[i][k] << endl;
                     fprintf(newInFile, "%1.8f ",A[i][k]);
                 }
                 fprintf(newInFile, "\n");
