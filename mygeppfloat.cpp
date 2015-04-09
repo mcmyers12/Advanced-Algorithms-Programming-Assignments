@@ -29,7 +29,6 @@ using namespace std;
 float absval(float);
 void INPUT(int *OK, float **&A, int *nVal, float bVal);
 void OUTPUT(int, int, int, int *, float *, float **&A);
-void makeInputFile(int nVal, float bVal);
 void makeMultipliersFile(vector<float> multipliers);
 
 
@@ -54,8 +53,7 @@ int main()
     float bValue;
     nValue = 101;
     nValue = 3+nValue;
-    bValue = 200;
-    makeInputFile(nValue,bValue);
+    bValue = 100;
 
    INPUT(&OK, A, &nValue, bValue);
     OK = true;
@@ -72,6 +70,7 @@ int main()
       ICHG = 0;
       I = 1;
       /* STEP 2 */
+      int counter = 1;
       while ((OK) && (I <= NN)) {
          /* STEP 3 */
          IMAX = NROW[I-1];
@@ -98,6 +97,7 @@ int main()
             }
             I1 = NROW[I-1];
             /* STEP 6 */
+            
             for (J=JJ; J<=nValue; J++) {
                J1 = NROW[J-1];
                /* STEP  7 */
@@ -108,6 +108,7 @@ int main()
                /* Multiplier XM could be saved in A[J1-1,I-1]  */
                A[J1-1][I-1] = XM;
                multipliers.push_back(XM);
+
             }
          }
          I++;
@@ -145,24 +146,7 @@ int main()
       }
       if (!OK) printf("System has no unique solution\n");
    }
-
-    cout << "These are the multipliers" << endl;
-   for(int i = 0; i < nValue; i++)
-    {
-        for(int j = 0; j < nValue; j++)
-        {
-            if(i == NROW[j]-1)
-            {
-                cout << NROW[j] << ": " << X[j] <<endl;
-            }
-        }
-
-       //cout << endl;
-    }
-
-   //for(int i = 0; i < 103; ++i)
-    //    A[i] = new float[104];
-
+    makeMultipliersFile(multipliers);
    return 0;
 }
 
@@ -176,7 +160,6 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
    float cVal = bVal-2;
 
     //first n rows
-    cout << "HERE" << endl;
    for(int i = 0; i+1 < *nVal; i++)
     {
         if(i < *nVal -2)
@@ -326,14 +309,15 @@ void OUTPUT(int N, int M, int ICHG, int *NROW, float *X, float **&A)
    */
    fprintf(OUP, "\n\nHas solution vector \n");
    for (I=3; I<=N-2; I+=5) {
-      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.6f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
+      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.16f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
    }
    fprintf (OUP, "\nwith %d row interchange(s)\n", ICHG);
+   /*
    fprintf(OUP, "\nThe rows have been logically re-ordered to:\n");
    for (I=1; I<=N; I++)
    {
         fprintf(OUP, " %2d", NROW[I-1]); fprintf(OUP,"\n");
-   }
+   }*/
 }
 
 /* Absolute Value Function */
@@ -342,67 +326,6 @@ float absval(float val)
    if (val >= 0) return val;
    else return -val;
 }
-
-
-//TODO we will want to change the name of this function
-void makeInputFile(int nVal, float bVal)
-{
-    float cVal = bVal - 2;
-    ofstream newInFile;
-    newInFile.open ("inFile104.dat");
-    for(int i = 0; i+1 < nVal; i++)
-    {
-        if(i+2 < nVal)
-        {
-            for(int j = 0; j+1 < nVal; j++)
-            {
-                if(i + 1 == j + 1)
-                {
-                    newInFile << -1;
-                    newInFile << " ";
-                    newInFile << bVal;
-                    newInFile << " ";
-                    newInFile << -1;
-                    newInFile << " ";
-                }
-                else if(j+2 == nVal)
-                {
-                    newInFile << cVal;
-                    newInFile << "\n";
-                }
-                else
-                {
-                    newInFile << 0;
-                    newInFile << " ";
-                }
-            }
-        }
-        else if(i+1 < nVal)
-        {
-            newInFile << "-1 0 1 ";
-            for(int x = 0; x < nVal - 6; x++)
-            {
-                newInFile << 0;
-                newInFile << " ";
-            }
-            newInFile << "1 0 -1 0 \n";
-
-            newInFile << "0 1 ";
-            for(int x = 0; x < nVal - 4; x++)
-            {
-                newInFile << 0;
-                newInFile << " ";
-            }
-
-            newInFile << "-1 0 0 ";
-        }
-
-    }
-
-    newInFile.close();
-
-}
-
 
 
 void makeMultipliersFile(vector<float> multipliers)
@@ -415,8 +338,5 @@ void makeMultipliersFile(vector<float> multipliers)
         newInFile << multipliers[i];
         newInFile << "\n";
     }
-
-
     newInFile.close();
-
 }
