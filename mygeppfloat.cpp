@@ -1,20 +1,14 @@
-/*
-*   Name Removed for CPSC 450 Students to figure out ALGORITHM 6.2
-*
-*   To solve the n by n linear system
-*
-*   E1:  A[1,1] X[1] + A[1,2] X[2] +...+ A[1,n] X[n] = A[1,n+1]
-*   E2:  A[2,1] X[1] + A[2,2] X[2] +...+ A[2,n] X[n] = A[2,n+1]
-*   :
-*   .
-*   EN:  A[n,1] X[1] + A[n,2] X[2] +...+ A[n,n] X[n] = A[n,n+1]
-*
-*   INPUT:   number of unknowns and equations n; augmented
-*            matrix A = (A(I,J)) where 1<=I<=n and 1<=J<=n+1.
-*
-*   OUTPUT:  solution x(1), x(2),...,x(n) or a message that the
-*            linear system has no unique solution.
-*/
+//@file mygeppfloat.cpp
+//@author Miranda Myers (mmyers4)
+//@author Sarah Prata
+//@date 4/8/15
+
+//Program accomplishes the following:
+// * Performs Gaussian Elimination using partial pivoting
+// * Fills the augmented matrix A with the coefficients of the special system of equations 
+//   for N = 101
+// * Outputs the multipliers to file multipliers.dat
+// * Outputs the solution to file solution.dat for just those values in (-π, π)
 
 #include<stdio.h>
 #include <fstream>
@@ -28,20 +22,24 @@ using namespace std;
 
 float absval(float);
 void INPUT(int *OK, float **&A, int *nVal, float bVal);
-void OUTPUT(int, int, int, int *, float *, float **&A);
 void makeMultipliersFile(vector<float> multipliers);
+
+//Outputs the solution vector to file solution.dat
+//@pre the number of equations and a solution vector exist
+//@post solution vector is in file solution.dat
+//@usage outputSolutionVectorToFile(numberEquations, solutionVector)
+void outputSolutionVectorToFile(int numberEquations, float *solutionVector);
+
 
 
 int main()
 {
-   //float A[103][104], X[103];
-   float X[(104*104)/2];
+   float X[104];
    float** A = new float*[104];
    for(int i = 0; i < 104; ++i)
    {
-       A[i] = new float[104];
+       A[i] = new float[105];
    }
-
 
 
    float AMAX,XM,SUM;
@@ -53,11 +51,10 @@ int main()
     float bValue;
     nValue = 101;
     nValue = 3+nValue;
-    bValue = 100;
+    bValue = 200;
 
    INPUT(&OK, A, &nValue, bValue);
     OK = true;
-    cout << OK << "OK <-" << endl;
    if (OK) {
       M = nValue + 1;
       /* STEP 1 */
@@ -116,9 +113,6 @@ int main()
       if (OK) {
          /* STEP 9 */
          N1 = NROW[nValue-1];
-         cout << "NROW[N-1];" << NROW[nValue-1] <<endl;
-         cout << "step9 absval(A[N1-1][N-1])" << absval(A[N1-1][nValue-1]) <<endl;
-         cout << "N and N1" << nValue << " " << N1 <<endl;
          if (absval(A[N1-1][nValue-1]) <= ZERO) {
                 cout << "Ok = false" << endl;
                 OK = false;
@@ -141,14 +135,15 @@ int main()
             }
             /* STEP 12 */
             /* procedure completed successfully */
-            OUTPUT(nValue, M, ICHG, NROW, X, A);
+            outputSolutionVectorToFile(nValue, X);
          }
       }
       if (!OK) printf("System has no unique solution\n");
    }
-    makeMultipliersFile(multipliers);
+   makeMultipliersFile(multipliers);
    return 0;
 }
+
 
 void INPUT(int *OK, float **&A, int *nVal, float bVal)
 {
@@ -225,31 +220,7 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
         }
 
     }
-    /*
-    for(int i = 0; i < *nVal; i++)
-    {
-        for(int j = 0; j < *nVal+1; j++)
-        {
-            cout << A[i][j] << " ";
-        }
-        cout << endl;
-    }
-    cout << "NVAL:" << endl;
-    cout << *nVal << endl;
-    */
 
-   printf("This is Gauss Elimination modified somehow -- your job to figure out how.\n");
-   printf("The array will be input from a text file in the order:\n");
-   printf("A(1,1), A(1,2), ..., A(1,N+1), A(2,1), A(2,2), ..., A(2,N+1),\n");
-   printf("..., A(N,1), A(N,2), ..., A(N,N+1)\n\n");
-   printf("Place as many entries as desired on each line, but separate ");
-   printf("entries with\n");
-   printf("at least one blank.\n\n\n");
-   printf("Has the input file been created? - enter Y or N.\n");
-   //cin.clear();
-   //cin.ignore(INT_MAX);
-   ///fflush(stdin);
-   ///scanf("%c",&AA);
    if ((AA == 'Y') || (AA == 'y')) {
         cout <<"HHH"<<endl;
       printf("Input the file name in the form - drive:name.ext\n");
@@ -274,51 +245,24 @@ void INPUT(int *OK, float **&A, int *nVal, float bVal)
       }
    }
    else {
-      printf("The program will end so the input file can be created.\n");
       *OK = false;
    }
 }
 
 
-void OUTPUT(int N, int M, int ICHG, int *NROW, float *X, float **&A)
+//Outputs the solution vector to file solution.dat
+//@pre the number of equations and a solution vector exist
+//@post solution vector is in file solution.dat
+//@usage outputSolutionVectorToFile(numberEquations, solutionVector)
+void outputSolutionVectorToFile(int numberEquations, float *solutionVector)
 {
-   int I, J, FLAG;
-   char NAME[104];
-   FILE *OUP;
-
-   printf("Choice of output method:\n");
-   printf("1. Output to screen\n");
-   printf("2. Output to text file\n");
-   printf("Please enter 1 or 2.\n");
-   scanf("%d", &FLAG);
-   if (FLAG == 2) {
-      printf("Input the file name in the form - drive:name.ext\n");
-      printf("for example:   A:OUTPUT.DTA\n");
-      scanf("%s", NAME);
-      OUP = fopen(NAME, "w");
+   FILE* solutionVectorFile;
+   solutionVectorFile = fopen("solution.dat", "w");
+   for (int i = 3; i <= numberEquations - 2; i += 5) {
+      fprintf(solutionVectorFile, "%12.6f    %12.6f    %12.6f    %12.6f    %12.6f\n", solutionVector[i - 1], solutionVector[i], solutionVector[i + 1], solutionVector[i + 2], solutionVector[i + 3]);
    }
-   else OUP = stdout;
-   fprintf(OUP, "GAUSSIAN ELIMINATION - WITH MYSTERY MODIFICATION\n\n");
-   fprintf(OUP, "The reduced system - output by rows:\n");
-   ///This was here before:
-   /*
-   for (I=1; I<=N; I++) {
-      for (J=1; J<=N; J++) fprintf(OUP, " %11.8f", A[I-1][J-1]);
-      fprintf(OUP, "\n");
-   }
-   */
-   fprintf(OUP, "\n\nHas solution vector \n");
-   for (I=3; I<=N-2; I+=5) {
-      fprintf(OUP, "%12.6f    %12.6f    %12.6f    %12.16f    %12.6f\n", X[I-1], X[I], X[I+1],X[I+2],X[I+3]);
-   }
-   fprintf (OUP, "\nwith %d row interchange(s)\n", ICHG);
-   /*
-   fprintf(OUP, "\nThe rows have been logically re-ordered to:\n");
-   for (I=1; I<=N; I++)
-   {
-        fprintf(OUP, " %2d", NROW[I-1]); fprintf(OUP,"\n");
-   }*/
 }
+
 
 /* Absolute Value Function */
 float absval(float val)
