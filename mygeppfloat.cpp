@@ -20,6 +20,7 @@
 #include <fstream>
 #include<math.h>
 #include <iostream>
+#include <vector>
 #define ZERO 1.0E-10
 #define true 1
 #define false 0
@@ -43,10 +44,12 @@ int main()
    }
 
 
+
    float AMAX,XM,SUM;
    int NROW[104];
    int M,ICHG,I,NN,IMAX,J,JJ,IP,JP,NCOPY,I1,J1,N1,K,N2,KK,OK;
 
+    vector<float> multipliers;
     int nValue;
     float bValue;
     nValue = 101;
