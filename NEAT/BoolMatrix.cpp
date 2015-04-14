@@ -1,9 +1,9 @@
 
 #include "BoolMatrix.h"
 
-BoolMatrix::BoolMatrix(bool (&adjacencyMatrixIn)[size][size])
+BoolMatrix::BoolMatrix(bool** adjacencyMatrixIn)
 {
-    adjacencyMatrix = &adjacencyMatrixIn;
+    adjacencyMatrix = adjacencyMatrixIn;
 }
 
 
@@ -61,13 +61,27 @@ void BoolMatrix::printMatrix()
 int main()
 {
     cout << "hi" << endl << endl;
+    int **adjacencyMatrix;
+    p = new int*[4]; // dynamic `array (size 4) of pointers to int`
+
+    for (int i = 0; i < 4; ++i) 
+    {
+        adjacencyMatrix[i] = new int[4];
+    }
     
+    for (int i = 0; i < 4; ++i) 
+    {
+        for (int j = 0; j < 4; ++j)
+            adjacencyMatrix[i][j] = 1;
+    } 
+    
+    /*
     bool adjacencyMatrix[4][4] = {  
         {0, 1, 0, 0} ,   /*  initializers for row indexed by 0 */
         {0, 0, 0, 1} ,
         {0, 0, 0, 0} ,   /*  initializers for row indexed by 1 */
         {1, 0, 1, 0}   /*  initializers for row indexed by 2 */
-    };
+    };*/
     
     BoolMatrix boolMatrix(adjacencyMatrix);
     boolMatrix.Warshall();
