@@ -1,15 +1,7 @@
-//
-//  BoolMatrix.cpp
-//  AlgorithmsWarshallAndFloyd
-//
-//  Created by Miranda Myers on 4/13/15.
-//  Copyright (c) 2015 Miranda Myers. All rights reserved.
-//
-
-#include "BoolMatrix.h"
 
 
 #include "BoolMatrix.h"
+
 
 BoolMatrix::BoolMatrix(bool** adjacencyMatrixIn, int sizeIn)
 {
@@ -23,24 +15,17 @@ BoolMatrix::~BoolMatrix()
     
 }
 
-//R(k)[i, j] ← R(k−1)[i, j] or (R(k−1)[i, k] and R(k−1)[k, j])
+
 //Completes one step of Warshall's Algorithm
 void BoolMatrix::WarshallStep(int k, int i, int j)
 {
-    adjacencyMatrix[i][j] = adjacencyMatrix[i][j] || (adjacencyMatrix[i][k] && adjacencyMatrix[i][k]);
+    adjacencyMatrix[i][j] = adjacencyMatrix[i][j] || (adjacencyMatrix[i][k] && adjacencyMatrix[k][j]);
 }
 
 
-/*
- ALGORITHM Warshall(A[1..n, 1..n])
- //Implements Warshall’s algorithm for computing the transitive closure
- //Input: The adjacency matrix A of a digraph with n vertices //Output: The transitive closure of the digraph
- R(0) ← A
- for k ← 1 to n do
- for i ← 1 to n do
- forj ←1tondo
- R(k)[i, j] ← R(k−1)[i, j] or (R(k−1)[i, k] and R(k−1)[k, j]) return R(n)
- */
+//Implements Warshall’s algorithm for computing the transitive closure
+//Input: The adjacency matrix A of a digraph with n vertices
+//Output: The transitive closure of the digraph
 void BoolMatrix::Warshall()//bool** adjacencyMatrix, bool** transitiveClosure)
 {
     printMatrix();
@@ -72,6 +57,7 @@ void BoolMatrix::printMatrix()
     cout << endl;
 }
 
+
 int main()
 {
     bool **adjacencyMatrix;
@@ -82,6 +68,7 @@ int main()
         adjacencyMatrix[i] = new bool[4];
     }
     
+    //Example from the book
     adjacencyMatrix[0][0] = 0;
     adjacencyMatrix[0][1] = 1;
     adjacencyMatrix[0][2] = 0;
@@ -99,9 +86,6 @@ int main()
     adjacencyMatrix[3][2] = 1;
     adjacencyMatrix[3][3] = 0;
     
-    
-
-
 BoolMatrix boolMatrix(adjacencyMatrix, 4);
 boolMatrix.Warshall();
 return 0;
