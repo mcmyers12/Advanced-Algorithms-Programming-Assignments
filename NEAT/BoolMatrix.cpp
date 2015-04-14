@@ -58,36 +58,5 @@ void BoolMatrix::printMatrix()
 }
 
 
-int main()
-{
-    bool **adjacencyMatrix;
-    adjacencyMatrix = new bool*[4]; // dynamic `array (size 4) of pointers to int`
-    
-    for (int i = 0; i < 4; ++i)
-    {
-        adjacencyMatrix[i] = new bool[4];
-    }
-    
-    //Example from the book
-    adjacencyMatrix[0][0] = 0;
-    adjacencyMatrix[0][1] = 1;
-    adjacencyMatrix[0][2] = 0;
-    adjacencyMatrix[0][3] = 0;
-    adjacencyMatrix[1][0] = 0;
-    adjacencyMatrix[1][1] = 0;
-    adjacencyMatrix[1][2] = 0;
-    adjacencyMatrix[1][3] = 1;
-    adjacencyMatrix[2][0] = 0;
-    adjacencyMatrix[2][1] = 0;
-    adjacencyMatrix[2][2] = 0;
-    adjacencyMatrix[2][3] = 0;
-    adjacencyMatrix[3][0] = 1;
-    adjacencyMatrix[3][1] = 0;
-    adjacencyMatrix[3][2] = 1;
-    adjacencyMatrix[3][3] = 0;
-    
-BoolMatrix boolMatrix(adjacencyMatrix, 4);
-boolMatrix.Warshall();
-return 0;
-}
+
 
