@@ -12,7 +12,7 @@ BoolMatrix::BoolMatrix(bool** adjacencyMatrixIn, int sizeIn)
 
 BoolMatrix::~BoolMatrix()
 {
-    
+
 }
 
 
@@ -36,7 +36,7 @@ void BoolMatrix::Warshall()//bool** adjacencyMatrix, bool** transitiveClosure)
             for (int j = 0; j < size; j++)
             {
                 WarshallStep(k, i, j);
-                
+
             }
         }
         printMatrix();
@@ -57,6 +57,36 @@ void BoolMatrix::printMatrix()
     cout << endl;
 }
 
+//overload of operator for 2-d array used for output
+bool BoolMatrix::operator [] (const std::pair<int,int>& Index) const
+{
+   return adjacencyMatrix[Index.first][Index.second];
+}
+
+//overload of operator for 2-d array, used for input
+bool & BoolMatrix::operator [] (const std::pair<int,int>& Index)
+{
+   return adjacencyMatrix[Index.first][Index.second];
+}
+
+
+istream& operator>> (istream& input, BoolMatrix& A)
+{
+    for (int i = 0; i < A.size; i++){
+        for (int j = 0; j < A.size; j++){
+            std::pair<int, int> theIndex(i,j);
+            input >> A[theIndex]; ///ToDo need to fix this..
+        }
+    }
+    return input;
+}
+
+
+ostream& operator<< (ostream& output, const BoolMatrix& A)
+{
+    output << A.size; ///TODO need to figure out what to output
+    return output;
+}
 
 
 
