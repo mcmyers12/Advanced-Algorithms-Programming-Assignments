@@ -3,6 +3,7 @@
 #include "IntMatrix.h"
 #include "limits.h"
 
+
 int main()
 {
     //*************************Warshall***************************//
@@ -69,6 +70,8 @@ int main()
     IntMatrix intMatrix(weightMatrix, 4);
     cout << endl << "Floyd's Algorithm steps" << endl;
     intMatrix.Floyd();
+
+    cout << "\033[1;31mbold red text\033[0m\n";
     return 0;
 }
 

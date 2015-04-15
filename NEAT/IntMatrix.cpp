@@ -60,6 +60,11 @@ void IntMatrix::printMatrix()
         for (int i = 0; i < size; i++)
         {
             cout << weightMatrix[k][i] << " ";
+            /*
+            if (weightMatrix[k][i] == infinity)
+                cout << "inf" << " ";
+            else
+                cout << weightMatrix[k][i] << " ";*/
         }
         cout << endl;
     }
