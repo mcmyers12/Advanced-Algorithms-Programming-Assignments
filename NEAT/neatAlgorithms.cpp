@@ -22,6 +22,7 @@ int main()
     cout << "Would you like to input the matrix from a file or from the keyboard? (F/K)" << endl;
     cin >> inputAnswer;
     if(inputAnswer == 'k' or inputAnswer == 'K'){
+      ///  cin >> adjacencyMatrix;
         for(int i = 0; i < sizeOfArray; i++)
         {
             for(int j = 0; j < sizeOfArray; j++)
@@ -30,6 +31,7 @@ int main()
             }
         }
     }
+
     else{
         ///readfile
         //Example from the book pg 307
@@ -51,10 +53,20 @@ int main()
         adjacencyMatrix[3][3] = 0;
     }
     ///adjacencyMatrix[0][0] << 0;
+ /*   for(int i = 0; i < sizeOfArray; i++)
+    {
+        for(int j = 0; j < sizeOfArray; j++)
+        {
+            cout << adjacencyMatrix[i][j] << endl;
+        }
+    }*/
 
     BoolMatrix boolMatrix(adjacencyMatrix, sizeOfArray);
+    cin >> boolMatrix;
     cout << "Warshall's Algorithm steps" << endl;
     boolMatrix.Warshall();
+    cout << "HERE" << adjacencyMatrix << endl;
+    cout << boolMatrix;
 
 
     //*************************Floyd***************************//
@@ -91,6 +103,7 @@ int main()
     intMatrix.Floyd();
 
     cout << "\033[1;31mbold red text\033[0m\n";
+    cout << intMatrix;
     return 0;
 }
 

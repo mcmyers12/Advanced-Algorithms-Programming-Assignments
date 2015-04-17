@@ -6,19 +6,25 @@
 BoolMatrix::BoolMatrix(bool** adjacencyMatrixIn, int sizeIn)
 {
     adjacencyMatrix = adjacencyMatrixIn;
+    previousAdjacencyMatrix = adjacencyMatrix;
     size = sizeIn;
 }
 
 
 BoolMatrix::~BoolMatrix()
 {
-
+    for(int i = 0; i < size; i++)
+    {
+        delete[ ] adjacencyMatrix[i];
+    }
+    delete[ ] adjacencyMatrix;
 }
 
 
 //Completes one step of Warshall's Algorithm
 void BoolMatrix::WarshallStep(int k, int i, int j)
 {
+    previousAdjacencyMatrix[i][j] = adjacencyMatrix[i][j];
     adjacencyMatrix[i][j] = adjacencyMatrix[i][j] || (adjacencyMatrix[i][k] && adjacencyMatrix[k][j]);
 }
 
@@ -31,6 +37,7 @@ void BoolMatrix::Warshall()//bool** adjacencyMatrix, bool** transitiveClosure)
     printMatrix();
     for (int k = 0; k < size; k++)
     {
+        ///previousAdjacencyMatrix = adjacencyMatrix;
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -39,7 +46,11 @@ void BoolMatrix::Warshall()//bool** adjacencyMatrix, bool** transitiveClosure)
 
             }
         }
+        cout << "current" << endl;
         printMatrix();
+        cout << "prev" << endl;
+        printMatrixPrev();
+        cout << endl;
     }
     //transitiveClosure = adjacencyMatrix;
 }
@@ -50,13 +61,35 @@ void BoolMatrix::printMatrix()
     {
         for (int i = 0; i < size; i++)
         {
-            cout << adjacencyMatrix[k][i] << " ";
+            if (adjacencyMatrix[k][i] != previousAdjacencyMatrix[k][i])
+            {
+                cout << adjacencyMatrix[k][i] << "c";
+            }
+            else
+            {
+                cout << adjacencyMatrix[k][i] << " ";
+            }
+
         }
         cout << endl;
     }
     cout << endl;
 }
 
+
+void BoolMatrix::printMatrixPrev()
+{
+    for (int k = 0; k < size; k++)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            cout << previousAdjacencyMatrix[k][i] << " ";
+
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
 //overload of operator for 2-d array used for output
 bool BoolMatrix::operator [] (const std::pair<int,int>& Index) const
 {
@@ -72,7 +105,9 @@ bool & BoolMatrix::operator [] (const std::pair<int,int>& Index)
 
 istream& operator>> (istream& input, BoolMatrix& A)
 {
-    for (int i = 0; i < A.size; i++){
+    ///input >> A[0][0];
+   ///A.size;
+  for (int i = 0; i < A.size; i++){
         for (int j = 0; j < A.size; j++){
             std::pair<int, int> theIndex(i,j);
             input >> A[theIndex]; ///ToDo need to fix this..
@@ -82,9 +117,15 @@ istream& operator>> (istream& input, BoolMatrix& A)
 }
 
 
-ostream& operator<< (ostream& output, const BoolMatrix& A)
+ostream& operator<< (ostream& output, const BoolMatrix &A)
 {
-    output << A.size; ///TODO need to figure out what to output
+    for (int i = 0; i < A.size; i++){
+        for (int j = 0; j < A.size; j++){
+            std::pair<int, int> theIndex(i,j);
+            output << A[theIndex] << " "; ///TODO need to figure out what to output
+        }
+        output << endl;
+    }
     return output;
 }
 

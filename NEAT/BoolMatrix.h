@@ -20,15 +20,19 @@ class BoolMatrix
         void WarshallStep(int k, int i, int j);
         void Warshall();//bool** adjacencyMatrix, bool** transitiveClosure);
         void printMatrix();
+        void printMatrixPrev();
         bool   operator [] (const std::pair<int,int>& Index) const; // For reading
         bool & operator [] (const std::pair<int,int>& Index);       // For writing
         friend istream& operator>> (istream& input, BoolMatrix& A); //for inputing via file or keyboard
         friend ostream& operator<< (ostream& output, const BoolMatrix& A); //for outputing to file or command line
 
+
+
     private:
         //static const int MAX_SIZE = 100;
         int size;
         bool** adjacencyMatrix;
+        bool** previousAdjacencyMatrix;
 };
 
 
