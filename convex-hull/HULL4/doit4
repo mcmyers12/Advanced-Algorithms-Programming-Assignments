@@ -1,0 +1,6 @@
+cd HULL4
+nano in4.dat
+nano convexhull.cpp
+./findhull
+cp in4.dat yourin4.dat
+
